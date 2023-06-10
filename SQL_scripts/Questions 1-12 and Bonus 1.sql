@@ -20,7 +20,7 @@
 -- WHERE location in('TN','KY')
 -- GROUP BY location;
 
---Answer: 21 in TN, 6 mmore in KY; 27 total
+--Answer: 21 in TN, 6 more in KY; 27 total
 
 -- 4.	How many postings in Tennessee have a star rating above 4?
 
@@ -43,6 +43,7 @@
 
 -- SELECT location, AVG(star_rating) AS avg_rating
 -- FROM data_analyst_jobs
+-- WHERE star_rating IS NOT NULL
 -- GROUP BY location
 -- ORDER BY avg_rating DESC;
 
@@ -65,68 +66,73 @@
 
 -- 9.	Find the name of each company and its average star rating for all companies that have more than 5000 reviews across all locations. How many companies are there with more that 5000 reviews across all locations?
 
--- SELECT DISTINCT(company), star_rating, review_count
+-- SELECT DISTINCT company, star_rating
 -- FROM data_analyst_jobs
 -- WHERE review_count>5000
--- AND company IS NOT NULL;
+-- AND company IS NOT NULL
+-- ORDER BY company;
 
 --Answer: 45
 
 -- 10.	Add the code to order the query in #9 from highest to lowest average star rating. Which company with more than 5000 reviews across all locations in the dataset has the highest star rating? What is that rating?
 
--- SELECT DISTINCT(company), star_rating, review_count
+-- SELECT DISTINCT company, star_rating
 -- FROM data_analyst_jobs
 -- WHERE review_count>5000
 -- AND company IS NOT NULL
 -- ORDER BY star_rating DESC;
 
---Answer: American Express
+--Answer: American Express, General Motors, Kaiser Permanente, Microsoft, Nike, & Unileaver in a tie
 
 -- 11.	Find all the job titles that contain the word ‘Analyst’. How many different job titles are there? 
 
 -- SELECT DISTINCT(title)
 -- FROM data_analyst_jobs
--- WHERE title LIKE '%Analyst%';
+-- WHERE title iLIKE '%Analyst%';
 
---Answer: 754
+--Answer: 774
 
 -- 12.	How many different job titles do not contain either the word ‘Analyst’ or the word ‘Analytics’? What word do these positions have in common?
 
 -- SELECT DISTINCT(title)
 -- FROM data_analyst_jobs
--- WHERE (LOWER(title) NOT LIKE '%analyst%'
--- AND LOWER(title) NOT LIKE '%analytics%');
+-- WHERE title NOT iLIKE '%analyst%'
+-- AND title NOT iLIKE '%analytics%';
 
 --Answer: Tableau
 
 -- **BONUS:**
 -- You want to understand which jobs requiring SQL are hard to fill. Find the number of jobs by industry (domain) that require SQL and have been posted longer than 3 weeks. 
 
--- SELECT data_analyst_jobs.domain, COUNT(days_since_posting) AS longer_than_3_weeks_count
--- FROM data_analyst_jobs
--- WHERE days_since_posting>21
--- GROUP BY data_analyst_jobs.domain;
+SELECT data_analyst_jobs.domain, COUNT(days_since_posting) AS longer_than_3_weeks_count
+FROM data_analyst_jobs
+WHERE days_since_posting>21
+	AND skill ILIKE '%sql%'
+GROUP BY data_analyst_jobs.domain;
 
 --  - Disregard any postings where the domain is NULL.
 
--- SELECT data_analyst_jobs.domain, COUNT(days_since_posting) AS longer_than_3_weeks_count
--- FROM data_analyst_jobs
--- WHERE days_since_posting>21
--- AND data_analyst_jobs.domain IS NOT NULL
--- GROUP BY data_analyst_jobs.domain;
+SELECT data_analyst_jobs.domain, COUNT(days_since_posting) AS longer_than_3_weeks_count
+FROM data_analyst_jobs
+WHERE days_since_posting>21
+	AND data_analyst_jobs.domain IS NOT NULL
+	AND skill ILIKE '%sql%'
+GROUP BY data_analyst_jobs.domain;
 
 --  - Order your results so that the domain with the greatest number of `hard to fill` jobs is at the top.
 
--- SELECT data_analyst_jobs.domain, COUNT(days_since_posting) AS longer_than_3_weeks_count
--- FROM data_analyst_jobs
--- WHERE days_since_posting>21
--- AND data_analyst_jobs.domain IS NOT NULL
--- GROUP BY data_analyst_jobs.domain
--- ORDER BY longer_than_3_weeks_count DESC;
+SELECT data_analyst_jobs.domain, COUNT(days_since_posting) AS longer_than_3_weeks_count
+FROM data_analyst_jobs
+WHERE days_since_posting>21
+	AND data_analyst_jobs.domain IS NOT NULL
+	AND skill ILIKE '%sql%'
+GROUP BY data_analyst_jobs.domain
+ORDER BY longer_than_3_weeks_count DESC
+LIMIT 4;
 
 --  - Which three industries are in the top 4 on this list? How many jobs have been listed for more than 3 weeks for each of the top 4?
 
--- Consulting and Business Services	110
--- Health Care						96
--- Internet and Software			84
--- Banks and Financial Services		77
+-- Consulting and Business Services	57
+-- Health Care						52
+-- Internet and Software			62
+-- Banks and Financial Services		61
